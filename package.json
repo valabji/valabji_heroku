@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/valabji/valabji_heroku#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "http-proxy": "^1.18.1",
+    "netcat": "^1.5.0"
   }
 }
