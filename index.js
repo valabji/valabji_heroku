@@ -13,55 +13,55 @@ nc.port(PORT).k().listen().on('data', function (rinfo, data) {
 }) */
 
 var http = require('http');
-var sys = require('sys');
+// var console = console;
 
-server = http.createServer(function(request, response) {
-     sys.log(request.connection.remoteAddress + ": " + 
-        request.method + " " + 
+server = http.createServer(function (request, response) {
+    console.log(request.connection.remoteAddress + ": " +
+        request.method + " " +
         request.url);
 
-      var proxy = http.createClient(80, request.headers['host']);
+    var proxy = http.createClient(80, request.headers['host']);
 
-      var proxy_request = proxy.request(request.method, request.url, 
-         request.headers);
+    var proxy_request = proxy.request(request.method, request.url,
+        request.headers);
 
-      proxy_request.addListener('response', function (proxy_response) {
-         proxy_response.addListener('data', function(chunk) {
+    proxy_request.addListener('response', function (proxy_response) {
+        proxy_response.addListener('data', function (chunk) {
             // sys.log("response: " + chunk);
             response.write(chunk, 'binary');
-         });
+        });
 
-         proxy_response.addListener('end', function() {
+        proxy_response.addListener('end', function () {
             response.end();
-         });
+        });
 
-         response.writeHead(proxy_response.statusCode, 
+        response.writeHead(proxy_response.statusCode,
             proxy_response.headers);
-      });
+    });
 
-      // prevent connection reset from killing the process
-      request.socket.removeAllListeners('error'); 
+    // prevent connection reset from killing the process
+    request.socket.removeAllListeners('error');
 
-      request.addListener('data', function(chunk) {
-            sys.log("request: " + chunk);
-            proxy_request.write(chunk, 'binary');
-         });
-      request.addListener('end', function() {
-            proxy_request.end();
-         });
-      request.socket.addListener('error', function(err) {
-            sys.error("error occured in request socket\n");
-            sys.inspect(err);
-         });
+    request.addListener('data', function (chunk) {
+        console.log("request: " + chunk);
+        proxy_request.write(chunk, 'binary');
+    });
+    request.addListener('end', function () {
+        proxy_request.end();
+    });
+    request.socket.addListener('error', function (err) {
+        console.error("error occured in request socket\n");
+        console.inspect(err);
+    });
 
 
-   });
+});
 
 server.listen(PORT);
 
-process.addListener("unhandledException", function (err) { 
-      sys.error("something bad happened!\n");
-      sys.inspect(err);
-      sys.error("restarting server");
-      server.listen(PORT);
+process.addListener("unhandledException", function (err) {
+    console.error("something bad happened!\n");
+    console.inspect(err);
+    console.error("restarting server");
+    server.listen(PORT);
 });
